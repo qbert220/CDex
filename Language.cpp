@@ -114,7 +114,6 @@ void CLanguage::ReportChangedID( int nID, const CUString& strResource, const CUS
 {
 	if ( g_nReportMissing )
 	{
-		BOOL		bAdd = TRUE;
 		CUString    strWrite;
 		CUString    strTmp;
 		CString		strRead;
@@ -145,7 +144,8 @@ void CLanguage::ReportChangedID( int nID, const CUString& strResource, const CUS
 		if ( cFile.Open(	missingTxtPath,
 							CFile::modeReadWrite | CFile::modeNoTruncate | CFile::modeCreate ) )
 		{
-            while ( cFile.ReadString( strRead ) )
+			BOOL		bAdd = TRUE;
+			while ( cFile.ReadString( strRead ) )
 			{
 				if ( strWrite.Find( CUString( strRead ) ) >=0 )
 				{
@@ -153,14 +153,13 @@ void CLanguage::ReportChangedID( int nID, const CUString& strResource, const CUS
 					break;
 				}
 			}
-		}
+			if (bAdd)
+			{
+				cFile.WriteString(strCnv.ToT(strWrite + _W("\n")));
+			}
 
-		if ( bAdd )
-		{
-            cFile.WriteString( strCnv.ToT( strWrite + _W( "\n" ) ) );
+			cFile.Close();
 		}
-
-		cFile.Close();
 	}
 }
 
